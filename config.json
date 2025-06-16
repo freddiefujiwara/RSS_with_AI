@@ -1,0 +1,11 @@
+{
+  "rss_url": "https://yoshikiito.github.io/test-qa-rss-feed/feeds/rss.xml",
+  "model": "gpt-4o-mini",
+  "prompt_template": "以下の記事のタイトルと内容を読んで、要点を日本語のbulletpoints（箇条書き）で5つ以内にまとめてください。\n各ポイントは簡潔で分かりやすく、技術的な内容も含めてください。\n\nタイトル: {title}\n\n記事内容:\n{content}\n\nbulletpoints:",
+  "system_message": "あなたは記事の要点を整理する専門家です。重要なポイントを簡潔にまとめることが得意です。",
+  "max_tokens": 1000,
+  "temperature": 0.3,
+  "max_content_length": 8000,
+  "default_article_limit": 5,
+  "request_delay_seconds": 1
+} 
