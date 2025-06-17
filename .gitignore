@@ -1,2 +1,22 @@
 setEnv.bat
 .env
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Python cache and build files
+__pycache__/
+*.py[cod]
+build/
+dist/
+*.egg-info/
+
+# Test and coverage outputs
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Misc
+.DS_Store
