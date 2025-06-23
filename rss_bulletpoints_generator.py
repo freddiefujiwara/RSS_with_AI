@@ -262,6 +262,7 @@ class RSSBulletPointsGenerator:
 
 def main():
     """メイン処理"""
+    print(f"キャッシュディレクトリ: {CACHE_DIR}") # キャッシュディレクトリのパスを表示
     try:
         generator = RSSBulletPointsGenerator()
         

@@ -41,6 +41,10 @@ python rss_bulletpoints_generator.py 10
 ## 出力例
 
 ```
+キャッシュディレクトリ: /home/user/.cache/rss_bulletpoints_generator
+設定ファイルを読み込みました: config.json
+最大1件の記事を処理します...
+
 RSS記事のbulletpoints生成結果
 ================================================================================
 
