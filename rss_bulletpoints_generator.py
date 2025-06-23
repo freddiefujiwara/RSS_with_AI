@@ -14,9 +14,17 @@ from dotenv import load_dotenv
 import time
 import sys
 import json
+import hashlib
+import os
+import tempfile
 
 # 環境変数を読み込み
 load_dotenv()
+
+# キャッシュディレクトリを定義
+CACHE_DIR = os.path.join(tempfile.gettempdir(), "rss_bulletpoints_cache")
+if not os.path.exists(CACHE_DIR):
+    os.makedirs(CACHE_DIR)
 
 class RSSBulletPointsGenerator:
     def __init__(self, config_file="config.json"):
@@ -115,11 +123,45 @@ class RSSBulletPointsGenerator:
             print(f"記事の取得でエラーが発生しました ({url}): {e}")
             return ""
     
+    def _get_cache_filepath(self, title, content):
+        """キャッシュファイルのパスを生成"""
+        key_string = f"{title}-{content}"
+        # ファイル名として安全なハッシュ値を生成
+        hashed_key = hashlib.sha256(key_string.encode('utf-8')).hexdigest()
+        return os.path.join(CACHE_DIR, f"{hashed_key}.json")
+
+    def _read_from_cache(self, filepath):
+        """キャッシュファイルからデータを読み込み"""
+        try:
+            if os.path.exists(filepath):
+                with open(filepath, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+        except Exception as e:
+            print(f"キャッシュの読み込みエラー ({filepath}): {e}")
+        return None
+
+    def _write_to_cache(self, filepath, data):
+        """キャッシュファイルにデータを書き込み"""
+        try:
+            with open(filepath, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            print(f"キャッシュの書き込みエラー ({filepath}): {e}")
+
     def generate_bulletpoints(self, title, content):
-        """OpenAI APIを使ってbulletpointsを生成"""
+        """OpenAI APIを使ってbulletpointsを生成（キャッシュ対応）"""
         if not content or len(content.strip()) < 50:
             return ["記事の内容を取得できませんでした"]
+
+        cache_filepath = self._get_cache_filepath(title, content)
         
+        # キャッシュを確認
+        cached_data = self._read_from_cache(cache_filepath)
+        if cached_data:
+            print(f"キャッシュから結果を取得しました: {title}")
+            return cached_data
+
+        print(f"キャッシュが見つからないため、APIを呼び出します: {title}")
         try:
             # 設定ファイルからプロンプトテンプレートとシステムメッセージを取得
             prompt_template = self.config.get('prompt_template', 
@@ -166,7 +208,12 @@ class RSSBulletPointsGenerator:
                     elif line:
                         list_bulletpoints.append(line)
             
-            return list_bulletpoints if list_bulletpoints else [bulletpoints_text]
+            result = list_bulletpoints if list_bulletpoints else [bulletpoints_text]
+
+            # 結果をキャッシュに保存
+            self._write_to_cache(cache_filepath, result)
+
+            return result
             
         except Exception as e:
             print(f"bulletpoints生成でエラーが発生しました: {e}")
