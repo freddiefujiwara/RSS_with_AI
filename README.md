@@ -66,6 +66,17 @@ Bulletpoints:
 - 記事の内容が短すぎる場合やHTMLの構造によっては、適切に本文を抽出できない場合があります
 - API呼び出し制限を考慮して、記事間に1秒の待機時間を設けています
 
+## キャッシュ機能
+
+本ツールは、一度生成した記事のbulletpointsをローカルにキャッシュする機能を備えています。これにより、同じ記事に対して再度リクエストがあった場合にOpenAI APIへの不要な呼び出しを防ぎ、処理速度の向上とAPI利用料の節約に貢献します。
+
+- **キャッシュの場所**:
+  - キャッシュファイルは、お使いのオペレーティングシステムのユーザー別キャッシュディレクトリ内に `rss_bulletpoints_generator` というサブディレクトリを作成して保存されます。
+  - LinuxやmacOSの場合: `~/.cache/rss_bulletpoints_generator/`
+  - Windowsの場合: 一般的に `C:\\Users\\<ユーザー名>\\AppData\\Local\\rss_bulletpoints_generator\\rss_bulletpoints_generator\\` のようなパスになります（環境によって正確なパスは異なります）。Pythonの`os.path.expanduser("~")`と`.cache`を組み合わせたものが基準となります。
+- **キャッシュのクリア方法**:
+  - 上記のキャッシュディレクトリ（`rss_bulletpoints_generator`）を手動で削除することで、すべてのキャッシュをクリアできます。
+
 ## 設定ファイル（config.json）
 
 `config.json`ファイルで以下の設定をカスタマイズできます：
