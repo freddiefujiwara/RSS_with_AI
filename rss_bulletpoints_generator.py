@@ -22,9 +22,10 @@ import tempfile
 load_dotenv()
 
 # キャッシュディレクトリを定義
-CACHE_DIR = os.path.join(tempfile.gettempdir(), "rss_bulletpoints_cache")
-if not os.path.exists(CACHE_DIR):
-    os.makedirs(CACHE_DIR)
+CACHE_BASE_DIR = os.path.expanduser("~")
+CACHE_DIR = os.path.join(CACHE_BASE_DIR, ".cache", "rss_bulletpoints_generator")
+# ディレクトリが存在しない場合は作成（親ディレクトリも含む）
+os.makedirs(CACHE_DIR, exist_ok=True)
 
 class RSSBulletPointsGenerator:
     def __init__(self, config_file="config.json"):
